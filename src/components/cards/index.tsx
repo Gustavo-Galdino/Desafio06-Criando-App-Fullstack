@@ -6,47 +6,104 @@ import {
   Box,
   Descriptions,
   StarContainer,
+  Content,
 } from './styles'
 
-import book from '@/assets/Book.png'
 import { Avatar } from '../avatar'
 import { Star } from 'phosphor-react'
+import { useEffect, useState } from 'react'
+import { api } from '@/lib/api'
 
-export function Cards() {
+interface CardsProps {
+  short: boolean
+}
+
+interface Books {
+  id: string
+  name: string
+  author: string
+  summary: string
+  cover_url: string
+}
+
+export function Cards({ short = true }: CardsProps) {
+  const [books, setBooks] = useState<Books[]>([])
+
+  useEffect(() => {
+    async function getBooks() {
+      const res = await api.get('book')
+
+      setBooks(res.data)
+    }
+
+    getBooks()
+  }, [])
+
   return (
-    <Box>
-      <Header>
-        <Avatar avatarUrl="https://github.com/Gustavo-Galdino.png" />
-        <div>
-          Voodoo
-          <span>Hoje</span>
-        </div>
-      </Header>
-      <StarContainer>
-        <Star />
-        <Star />
-        <Star />
-        <Star />
-        <Star />
-      </StarContainer>
+    <>
+      {short
+        ? books.map((book) => {
+            return (
+              <Box key={book.id}>
+                <Header>
+                  <Avatar avatarUrl="https://github.com/Gustavo-Galdino.png" />
+                  <div>
+                    Voodoo
+                    <span>Hoje</span>
+                  </div>
+                </Header>
+                <StarContainer>
+                  <Star weight="fill" />
+                  <Star />
+                  <Star />
+                  <Star />
+                  <Star />
+                </StarContainer>
 
-      <BookContainer>
-        <Image src={book} alt="" />
+                <BookContainer>
+                  <Image
+                    src={`${book.cover_url}`}
+                    alt=""
+                    width={108}
+                    height={152}
+                  />
 
-        <div>
-          <Author>
-            <h2>O Hobbit</h2>
-            <p>J.R.R Tolkien</p>
-          </Author>
+                  <div>
+                    <Author>
+                      <h2>{book.name}</h2>
+                      <p>{book.author}</p>
+                    </Author>
 
-          <Descriptions>
-            Semper et sapien proin vitae nisi. Feugiat neque integer donec et
-            aenean posuere amet ultrices. Cras fermentum id pulvinar varius leo
-            a in. Amet libero pharetra nunc elementum fringilla velit ipsum. Sed
-            vulputate massa velit nibh...
-          </Descriptions>
-        </div>
-      </BookContainer>
-    </Box>
+                    <Descriptions>{book.summary}</Descriptions>
+                  </div>
+                </BookContainer>
+              </Box>
+            )
+          })
+        : books.map((book) => {
+            return (
+              <Box variant="short" key={book.id}>
+                <BookContainer>
+                  <Image src={book.cover_url} alt="" width={64} height={94} />
+
+                  <Content>
+                    <Author variant="short">
+                      <h2>{book.name}</h2>
+                      <p>{book.author}</p>
+                    </Author>
+
+                    <StarContainer variant="short">
+                      <Star weight="fill" />
+                      <Star />
+                      <Star />
+                      <Star />
+                      <Star />
+                    </StarContainer>
+                  </Content>
+                </BookContainer>
+              </Box>
+            )
+          })}
+    </>
   )
 }

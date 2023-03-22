@@ -8,22 +8,24 @@ import logo from '@/assets/Logo.svg'
 export function Nav() {
   return (
     <NavContainer>
-      <Image src={logo} width={128} alt="BookWise" />
+      <div>
+        <Image src={logo} width={128} alt="BookWise" />
 
-      <LinkContainer>
-        <Link href="#">
-          <NavLink variant={'active'}>
-            <ChartLineUp size={24} />
-            Início
-          </NavLink>
-        </Link>
-        <Link href="#">
-          <NavLink>
-            <Binoculars size={24} />
-            Explorar
-          </NavLink>
-        </Link>
-      </LinkContainer>
+        <LinkContainer>
+          <Link href="#">
+            <NavLink variant={'active'}>
+              <ChartLineUp size={24} />
+              Início
+            </NavLink>
+          </Link>
+          <Link href="#">
+            <NavLink>
+              <Binoculars size={24} />
+              Explorar
+            </NavLink>
+          </Link>
+        </LinkContainer>
+      </div>
       <Button>
         Fazer Login
         <SignIn size={20} />

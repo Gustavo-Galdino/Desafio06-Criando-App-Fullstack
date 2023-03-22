@@ -11,7 +11,7 @@ export function Review() {
       </Header>
       <p>Avaliações mais recentes</p>
 
-      <Cards />
+      <Cards short />
     </ReviewContainer>
   )
 }

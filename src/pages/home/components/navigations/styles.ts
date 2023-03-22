@@ -3,12 +3,13 @@ import { styled } from '../../../../../stitches.config'
 export const NavContainer = styled('nav', {
   backgroundColor: '$gray700',
   borderRadius: '$md',
-  height: '100vh',
+  height: '94vh',
   padding: '$10',
 
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
+  justifyContent: 'space-between',
 
   img: {
     marginBottom: '$10',
@@ -62,9 +63,6 @@ export const NavLink = styled('div', {
 export const Button = styled('button', {
   all: 'unset',
   cursor: 'pointer',
-
-  position: 'absolute',
-  bottom: 0,
 
   display: 'flex',
   alignItems: 'center',
