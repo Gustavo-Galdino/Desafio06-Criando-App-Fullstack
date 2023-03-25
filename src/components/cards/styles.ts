@@ -1,8 +1,8 @@
 import { styled } from '../../../stitches.config'
 
-export const Box = styled('div', {
+export const Box = styled('section', {
   backgroundColor: '$gray700',
-  padding: '$6',
+  padding: '$4',
   borderRadius: '$md',
 
   position: 'relative',
@@ -16,19 +16,21 @@ export const Box = styled('div', {
       short: {
         width: 324,
       },
+      default: {},
     },
   },
 })
 
 export const Header = styled('header', {
   display: 'flex',
+  justifyContent: 'space-between',
 
   gap: '$4',
   marginBottom: '$8',
 
   '> div': {
     display: 'flex',
-    flexDirection: 'column',
+    gap: '$4',
 
     lineHeight: '$base',
 
@@ -36,20 +38,10 @@ export const Header = styled('header', {
       fontSize: '$sm',
       color: '$gray400',
     },
-  },
-})
 
-export const StarContainer = styled('div', {
-  position: 'absolute',
-  right: '$5',
-  top: '$7',
-  color: '$purple100',
-
-  variants: {
-    variant: {
-      short: {
-        position: 'static',
-      },
+    div: {
+      display: 'flex',
+      flexDirection: 'column',
     },
   },
 })
@@ -60,11 +52,28 @@ export const Content = styled('div', {
   justifyContent: 'space-between',
 })
 
-export const BookContainer = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
+export const StarContainer = styled('article', {
+  color: '$purple100',
 
-  gap: '$5',
+  variants: {
+    variant: {
+      short: {},
+      default: {},
+    },
+  },
+})
+
+export const BookContainer = styled('div', {
+  display: 'grid',
+  gridTemplateColumns: 'auto 1fr',
+  columnGap: '$5',
+
+  variants: {
+    variant: {
+      short: {},
+      default: {},
+    },
+  },
 })
 
 export const Author = styled('div', {
@@ -79,8 +88,6 @@ export const Author = styled('div', {
     color: '$gray400',
   },
 
-  marginBottom: '$5',
-
   variants: {
     variant: {
       short: {
@@ -88,6 +95,7 @@ export const Author = styled('div', {
           fontSize: '$md',
         },
       },
+      default: {},
     },
   },
 })

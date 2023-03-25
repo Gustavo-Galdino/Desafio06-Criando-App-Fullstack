@@ -1,5 +1,7 @@
 import { Cards } from '@/components/cards'
+
 import { ChartLineUp } from 'phosphor-react'
+
 import { Header, ReviewContainer } from './styles'
 
 export function Review() {

@@ -10,7 +10,15 @@ export default async function handler(
   }
 
   try {
-    const books = await prisma.book.findMany()
+    const books = await prisma.category.findMany({
+      include: {
+        books: true,
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    })
+
     return res.status(200).json(books)
   } catch (error) {
     console.error(error)

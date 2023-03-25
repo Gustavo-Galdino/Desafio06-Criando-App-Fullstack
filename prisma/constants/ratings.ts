@@ -4,14 +4,6 @@ export const ratings = [
   {
     id: uuidv4(),
     rate: 4,
-    description:
-      'Nec tempor nunc in egestas. Euismod nisi eleifend at et in sagittis. Penatibus id vestibulum imperdiet a at imperdiet lectus leo. Sit porta eget nec vitae sit vulputate eget',
-    book_id: '375948a7-bca3-4b59-9f97-bfcde036b4ca',
-    user_id: '48e458c0-8b1e-4994-b85a-1e1cfcc9dd60',
-  },
-  {
-    id: uuidv4(),
-    rate: 4,
     description: 'Nec tempor nunc in egestas.',
     book_id: '86596503-369b-4614-bacf-11c9bb73e779',
     user_id: 'c296c6c0-5c59-40dd-aa8a-ef2b015b7502',

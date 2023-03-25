@@ -4,8 +4,11 @@ import githubLogo from '@/assets/githubLogo.svg'
 import rocketLogo from '@/assets/rocketLogo.svg'
 import Image from 'next/image'
 import { Button, ButtonContainer, Container, LoginContainer } from './styles'
+import { useRouter } from 'next/router'
 
 export default function Login() {
+  const router = useRouter()
+
   return (
     <Container>
       <Image src={Banner} width={598} height={912} alt="Book Wise Banner" />
@@ -23,7 +26,7 @@ export default function Login() {
             <Image src={githubLogo} width={32} height={32} alt="GitHub Logo" />
             Entrar com GitHub
           </Button>
-          <Button type="button">
+          <Button type="button" onClick={() => router.push('/home')}>
             <Image src={rocketLogo} width={32} height={32} alt="Rocket Logo" />
             Acessar como visitante
           </Button>
