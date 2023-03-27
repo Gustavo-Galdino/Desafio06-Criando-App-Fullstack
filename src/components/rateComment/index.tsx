@@ -32,11 +32,9 @@ export function RateComment({ bookId }: RateCommentProps) {
   ) {
     try {
       await api.post('/ratings/comment', {
-        data: {
-          rate,
-          description,
-          bookId,
-        },
+        rate,
+        description,
+        bookId,
       })
     } catch (error) {
       console.error(error)
