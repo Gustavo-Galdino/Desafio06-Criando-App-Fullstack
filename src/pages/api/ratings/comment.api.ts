@@ -16,19 +16,19 @@ export default async function handler(
     return res.status(401).end()
   }
 
-  const userId = session?.user?.id
-  if (!userId) {
-    return res.status(401).end()
-  }
-
   const { rate, description, bookId } = req.body
+  const userId = session.user.id
 
   await prisma.rating.create({
     data: {
       rate,
       description,
-      book_id: bookId,
-      user_id: userId,
+      book: {
+        connect: { id: bookId },
+      },
+      user: {
+        connect: { id: userId },
+      },
     },
   })
 

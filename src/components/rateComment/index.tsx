@@ -17,6 +17,9 @@ export function RateComment({ bookId }: RateCommentProps) {
 
   const session = useSession()
 
+  const rate = 4
+  const description = watch('description')
+
   function handleStarClick(index: number) {
     const newStars = stars.map((_, i) => i <= index)
     setStars(newStars)
@@ -28,7 +31,7 @@ export function RateComment({ bookId }: RateCommentProps) {
     bookId: string,
   ) {
     try {
-      await api.post('/users/comment', {
+      await api.post('/ratings/comment', {
         data: {
           rate,
           description,
@@ -39,9 +42,6 @@ export function RateComment({ bookId }: RateCommentProps) {
       console.error(error)
     }
   }
-
-  const rate = 4
-  const description = watch('description')
 
   return (
     <Box>
