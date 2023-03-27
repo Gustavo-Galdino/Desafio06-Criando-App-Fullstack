@@ -1,8 +1,10 @@
+import { useApi } from '@/context/apiContext'
 import { api } from '@/lib/api'
 import Image from 'next/image'
+import * as Dialog from '@radix-ui/react-dialog'
 
 import { Binoculars, MagnifyingGlass, Star } from 'phosphor-react'
-import { KeyboardEvent, useEffect, useState } from 'react'
+import { KeyboardEvent, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import {
   Author,
@@ -16,15 +18,11 @@ import {
   InputContainer,
   StarContainer,
 } from './styles'
+import { BookDetails } from '@/components/bookDetails'
 
 interface CategoriesOnBooks {
   book_id: string
-}
-
-interface Category {
-  id: string
-  name: string
-  books: CategoriesOnBooks[]
+  categoryId: string
 }
 
 interface Rating {
@@ -38,35 +36,15 @@ interface Books {
   author: string
   summary: string
   cover_url: string
+  total_pages?: number
   ratings: Rating[]
+  categories?: CategoriesOnBooks[]
 }
 
 export function Explorer() {
-  const [categories, setCategories] = useState<Category[]>([])
-  const [books, setBooks] = useState<Books[]>([])
-  const [selectedCategory, setSelectedCategory] = useState<Books[]>([])
+  const { books, categories } = useApi()
+  const [selectedCategory, setSelectedCategory] = useState<Books[]>(books)
   const { register, watch } = useForm()
-
-  useEffect(() => {
-    async function getBooks() {
-      const res = await api.get('books')
-
-      setBooks(res.data)
-      setSelectedCategory(res.data)
-    }
-
-    getBooks()
-  }, [])
-
-  useEffect(() => {
-    async function getCategory() {
-      const res = await api.get('/category')
-
-      setCategories(res.data)
-    }
-
-    getCategory()
-  }, [])
 
   function handleTagCategory(id: string) {
     const category = categories.find((category) => category.id === id)
@@ -88,6 +66,18 @@ export function Explorer() {
     if (event.key === 'Enter') {
       await handleSearchBook()
     }
+  }
+
+  function handleCaptureCategory(id: string) {
+    const selectedBook = selectedCategory.find((book) => book.id === id)
+    const selectedCategories = selectedBook?.categories?.map((category) => {
+      const foundCategory = categories.find(
+        (cate) => cate.id === category.categoryId,
+      )
+      return foundCategory ? foundCategory.name : ''
+    })
+
+    return selectedCategories?.join(',')
   }
 
   return (
@@ -123,31 +113,51 @@ export function Explorer() {
       </CategoriesContainer>
       <CardsContainer>
         {selectedCategory.map((book) => (
-          <Box key={book.id}>
-            <BookContainer>
-              <Image
-                src={`${book.cover_url}`}
-                alt=""
-                width={108}
-                height={152}
-              />
-              <Content>
-                <Author>
-                  <h2>{book.name}</h2>
-                  <p>{book.author}</p>
-                </Author>
-
-                {book.ratings.map((rating) => (
-                  <StarContainer key={rating.id}>
-                    {[...Array(rating.rate)].map((_, index) => (
-                      <Star weight="fill" key={index} />
+          <Dialog.Root key={book.id}>
+            <Dialog.Trigger asChild>
+              <Box>
+                <BookContainer>
+                  <Image
+                    src={`${book.cover_url}`}
+                    alt=""
+                    width={108}
+                    height={152}
+                  />
+                  <Content>
+                    <Author>
+                      <h2>{book.name}</h2>
+                      <p>{book.author}</p>
+                    </Author>
+                    {book.ratings.map((rating) => (
+                      <StarContainer key={rating.id}>
+                        {[...Array(rating.rate)].map((_, index) => (
+                          <Star weight="fill" key={index} />
+                        ))}
+                        {rating.rate < 5 && <Star />}
+                      </StarContainer>
                     ))}
-                    {rating.rate < 5 && <Star />}
-                  </StarContainer>
-                ))}
-              </Content>
-            </BookContainer>
-          </Box>
+                  </Content>
+                </BookContainer>
+              </Box>
+            </Dialog.Trigger>
+
+            <BookDetails
+              author={book.author}
+              image={book.cover_url}
+              name={book.name}
+              totalPages={book.total_pages!}
+              category={handleCaptureCategory(book.id)}
+              bookId={book.id}
+              rate={book.ratings.map((rating) => (
+                <StarContainer key={rating.id}>
+                  {[...Array(rating.rate)].map((_, index) => (
+                    <Star weight="fill" key={index} />
+                  ))}
+                  {rating.rate < 5 && <Star />}
+                </StarContainer>
+              ))}
+            />
+          </Dialog.Root>
         ))}
       </CardsContainer>
     </Container>

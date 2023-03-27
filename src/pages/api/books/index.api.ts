@@ -20,6 +20,7 @@ export default async function handler(
       },
       include: {
         ratings: true,
+        categories: true,
       },
       orderBy: {
         created_at: 'desc',

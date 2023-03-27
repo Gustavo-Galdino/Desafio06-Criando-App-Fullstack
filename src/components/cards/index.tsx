@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import * as Dialog from '@radix-ui/react-dialog'
 import {
   Author,
   Header,
@@ -11,162 +12,146 @@ import {
 
 import { Avatar } from '../avatar'
 import { Star } from 'phosphor-react'
-import { useEffect, useState } from 'react'
-import { api } from '@/lib/api'
+import { useApi } from '@/context/apiContext'
+import { BookDetails } from '../bookDetails'
 
 interface CardsProps {
   short: boolean
-  width?: number
-  height?: number
   popularView?: boolean
 }
 
-interface Rating {
-  id: string
-  rate: number
-  book_id: string
-}
+export function Cards({ short = true, popularView = false }: CardsProps) {
+  const { users, books, popularBooks, categories } = useApi()
 
-interface Books {
-  id: string
-  name: string
-  author: string
-  summary: string
-  cover_url: string
-  ratings: Rating[]
-}
+  function handleCaptureCategory(id: string) {
+    const selectedBook = books.find((book) => book.id === id)
+    const selectedCategories = selectedBook?.categories?.map((category) => {
+      const foundCategory = categories.find(
+        (cate) => cate.id === category.categoryId,
+      )
+      return foundCategory ? foundCategory.name : ''
+    })
 
-interface User {
-  id: string
-  name: string
-  avatar_url: string
-  ratings: Rating[]
-  book: Books[]
-}
-
-export function Cards({
-  short = true,
-  width,
-  height,
-  popularView = false,
-}: CardsProps) {
-  const [books, setBooks] = useState<Books[]>([])
-  const [popularBooks, setPopularBooks] = useState<Books[]>([])
-  const [user, setUser] = useState<User[]>([])
-
-  useEffect(() => {
-    async function getBooks() {
-      const res = await api.get('books')
-
-      setBooks(res.data)
-    }
-
-    getBooks()
-  }, [])
-
-  useEffect(() => {
-    async function getUser() {
-      const res = await api.get('users')
-
-      setUser(res.data)
-    }
-
-    getUser()
-  }, [])
-
-  useEffect(() => {
-    if (popularView) {
-      const mostRatting = books.sort((a, b) => {
-        const ratingA =
-          a.ratings.reduce((sum, rating) => sum + rating.rate, 0) /
-          a.ratings.length
-        const ratingB =
-          b.ratings.reduce((sum, rating) => sum + rating.rate, 0) /
-          b.ratings.length
-        return ratingB - ratingA
-      })
-
-      setPopularBooks(mostRatting)
-    }
-  }, [books, popularView])
+    return selectedCategories?.join(',')
+  }
 
   return (
     <>
       {popularView ? (
         <>
-          {popularBooks.slice(0, 4).map((book) => (
-            <Box key={book.id} variant={!short ? 'short' : 'default'}>
-              <BookContainer variant={!short ? 'short' : 'default'}>
-                <Image
-                  src={`${book.cover_url}`}
-                  alt=""
-                  width={width || 108}
-                  height={height || 152}
-                />
-                <Content>
-                  <Author variant={!short ? 'short' : 'default'}>
-                    <h2>{book.name}</h2>
-                    <p>{book.author}</p>
-                  </Author>
+          {popularBooks?.map((book) => (
+            <Dialog.Root key={book.id}>
+              <Dialog.Trigger asChild>
+                <Box variant={!short ? 'short' : 'default'}>
+                  <BookContainer variant={!short ? 'short' : 'default'}>
+                    <Image
+                      src={`${book.cover_url}`}
+                      alt=""
+                      width={64}
+                      height={94}
+                    />
+                    <Content>
+                      <Author variant={!short ? 'short' : 'default'}>
+                        <h2>{book.name}</h2>
+                        <p>{book.author}</p>
+                      </Author>
 
-                  {book.ratings.map((rating) => (
-                    <StarContainer
-                      key={rating.id}
-                      variant={!short ? 'short' : 'default'}
-                    >
-                      {[...Array(rating.rate)].map((_, index) => (
-                        <Star weight="fill" key={index} />
+                      {book.ratings.map((rating) => (
+                        <StarContainer
+                          key={rating.id}
+                          variant={!short ? 'short' : 'default'}
+                        >
+                          {[...Array(rating.rate)].map((_, index) => (
+                            <Star weight="fill" key={index} />
+                          ))}
+                          {rating.rate < 5 && <Star />}
+                        </StarContainer>
                       ))}
-                      {rating.rate < 5 && <Star />}
-                    </StarContainer>
-                  ))}
-                </Content>
-              </BookContainer>
-            </Box>
+                    </Content>
+                  </BookContainer>
+                </Box>
+              </Dialog.Trigger>
+              <BookDetails
+                author={book.author}
+                image={book.cover_url}
+                name={book.name}
+                totalPages={book.total_pages!}
+                category={handleCaptureCategory(book.id)}
+                bookId={book.id}
+                rate={book.ratings.map((rating) => (
+                  <StarContainer key={rating.id}>
+                    {[...Array(rating.rate)].map((_, index) => (
+                      <Star weight="fill" key={index} />
+                    ))}
+                    {rating.rate < 5 && <Star />}
+                  </StarContainer>
+                ))}
+              />
+            </Dialog.Root>
           ))}
         </>
       ) : (
         <>
-          {user.map((user) =>
+          {users.map((user) =>
             user.ratings.map((rating) => {
               const book = books.find((book) => book.id === rating.book_id)
               if (!book) return null
               return (
-                <Box key={book.id}>
-                  <>
-                    <Header>
-                      <div>
-                        <Avatar avatarUrl={user.avatar_url} />
+                <Dialog.Root key={book.id}>
+                  <Dialog.Trigger asChild>
+                    <Box key={book.id}>
+                      <>
+                        <Header>
+                          <div>
+                            <Avatar image={user.image} />
+                            <div>
+                              {user.name}
+                              <span>Hoje</span>
+                            </div>
+                          </div>
+                          <StarContainer>
+                            {[...Array(rating.rate)].map((_, index) => (
+                              <Star weight="fill" key={index} />
+                            ))}
+                            {rating.rate < 5 && <Star />}
+                          </StarContainer>
+                        </Header>
+                      </>
+
+                      <BookContainer>
+                        <Image
+                          src={`${book.cover_url}`}
+                          alt=""
+                          width={108}
+                          height={152}
+                        />
                         <div>
-                          {user.name}
-                          <span>Hoje</span>
+                          <Author>
+                            <h2>{book.name}</h2>
+                            <p>{book.author}</p>
+                          </Author>
+                          <Descriptions>{book.summary}</Descriptions>
                         </div>
-                      </div>
-                      <StarContainer>
-                        {[...Array(rating.rate)].map((_, index) => (
-                          <Star weight="fill" key={index} />
+
+                        {book.ratings.map((rating) => (
+                          <StarContainer key={rating.id}>
+                            {[...Array(rating.rate)].map((_, index) => (
+                              <Star weight="fill" key={index} />
+                            ))}
+                            {rating.rate < 5 && <Star />}
+                          </StarContainer>
                         ))}
-                        {rating.rate < 5 && <Star />}
-                      </StarContainer>
-                    </Header>
-                  </>
-
-                  <BookContainer>
-                    <Image
-                      src={`${book.cover_url}`}
-                      alt=""
-                      width={width || 108}
-                      height={height || 152}
-                    />
-                    <div>
-                      <Author>
-                        <h2>{book.name}</h2>
-                        <p>{book.author}</p>
-                      </Author>
-                      <Descriptions>{book.summary}</Descriptions>
-                    </div>
-
-                    {book.ratings.map((rating) => (
+                      </BookContainer>
+                    </Box>
+                  </Dialog.Trigger>
+                  <BookDetails
+                    author={book.author}
+                    image={book.cover_url}
+                    name={book.name}
+                    totalPages={book.total_pages!}
+                    category={handleCaptureCategory(book.id)}
+                    bookId={book.id}
+                    rate={book.ratings.map((rating) => (
                       <StarContainer key={rating.id}>
                         {[...Array(rating.rate)].map((_, index) => (
                           <Star weight="fill" key={index} />
@@ -174,8 +159,8 @@ export function Cards({
                         {rating.rate < 5 && <Star />}
                       </StarContainer>
                     ))}
-                  </BookContainer>
-                </Box>
+                  />
+                </Dialog.Root>
               )
             }),
           )}

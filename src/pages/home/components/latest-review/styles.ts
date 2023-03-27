@@ -3,7 +3,6 @@ import { styled } from '../../../../../stitches.config'
 export const ReviewContainer = styled('div', {
   display: 'flex',
   flexDirection: 'column',
-  marginLeft: '$10',
 
   p: {
     marginBottom: '$4',

@@ -13,7 +13,7 @@ export function Popular() {
         </Link>
       </Header>
 
-      <Cards short={false} width={64} height={94} popularView={true} />
+      <Cards short={false} popularView={true} />
     </PopularContainer>
   )
 }

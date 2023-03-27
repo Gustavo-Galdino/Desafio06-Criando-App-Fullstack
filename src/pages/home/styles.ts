@@ -4,7 +4,8 @@ export const Container = styled('main', {
   padding: '$5',
 
   display: 'grid',
-  gridTemplateColumns: 'auto 1fr',
+  gridTemplateColumns: '282px 1fr',
+  gap: '$7',
   justifyContent: 'center',
 })
 
@@ -19,7 +20,7 @@ export const NavContainer = styled('nav', {
   backgroundColor: '$gray700',
   borderRadius: '$md',
   height: '94vh',
-  minWidth: 232,
+  minWidth: '100%',
   padding: '$10',
 
   display: 'flex',
@@ -96,13 +97,9 @@ export const Button = styled('button', {
   color: '$gray200',
   fontWeight: '$bold',
   lineHeight: '$base',
+  fontSize: '$sm',
 
   svg: {
     color: '$green100',
-  },
-
-  '&:hover': {
-    backgroundColor: '$gray600',
-    borderRadius: '$sm',
   },
 })

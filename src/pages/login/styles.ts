@@ -3,10 +3,13 @@ import { styled } from '../../../stitches.config'
 export const Container = styled('main', {
   display: 'grid',
   gridTemplateColumns: 'auto 1fr',
-  gap: '$4',
   alignItems: 'center',
+  justifyContent: 'center',
 
-  padding: '$5',
+  '> img': {
+    gridColumn: 1,
+    padding: '$4',
+  },
 })
 
 export const LoginContainer = styled('section', {

@@ -6,6 +6,7 @@ export const Box = styled('section', {
   borderRadius: '$md',
 
   position: 'relative',
+  cursor: 'pointer',
 
   '& + &': {
     marginTop: '$3',

@@ -2,13 +2,13 @@ import { User } from 'phosphor-react'
 import { AvatarContainer, AvatarImage, AvatarFallback } from './styles'
 
 interface AvatarProps {
-  avatarUrl: string
+  image: string
 }
 
-export function Avatar({ avatarUrl }: AvatarProps) {
+export function Avatar({ image }: AvatarProps) {
   return (
     <AvatarContainer>
-      <AvatarImage src={avatarUrl} />
+      <AvatarImage src={image} />
 
       <AvatarFallback delayMs={600}>
         <User />

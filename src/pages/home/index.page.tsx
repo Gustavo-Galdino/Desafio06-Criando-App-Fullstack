@@ -10,13 +10,19 @@ import {
   NavContainer,
   NavLink,
 } from './styles'
-import { ChartLineUp, Binoculars, SignIn } from 'phosphor-react'
+import { ChartLineUp, Binoculars, SignIn, SignOut } from 'phosphor-react'
 import logo from '@/assets/Logo.svg'
 import { useState } from 'react'
 import { Explorer } from './components/explorer'
+import { signIn, signOut, useSession } from 'next-auth/react'
+import { Avatar } from '@/components/avatar'
 
 export default function Home() {
   const [activePage, setActivePage] = useState('/home')
+
+  const session = useSession()
+
+  const isSignedIn = session.status === 'authenticated'
 
   return (
     <Container>
@@ -45,10 +51,18 @@ export default function Home() {
             </button>
           </LinkContainer>
         </div>
-        <Button>
-          Fazer Login
-          <SignIn size={20} />
-        </Button>
+        {isSignedIn ? (
+          <Button onClick={() => signOut()}>
+            <Avatar image={session.data.user?.image || ''} />
+            {session.data.user?.name}
+            <SignOut size={20} color="#F75A68" />
+          </Button>
+        ) : (
+          <Button onClick={() => signIn('google')}>
+            Fazer Login
+            <SignIn size={20} />
+          </Button>
+        )}
       </NavContainer>
 
       <Main>

@@ -4,7 +4,6 @@ export const Container = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   gap: '$10',
-  padding: '0 $10',
 })
 
 export const Header = styled('header', {
@@ -106,7 +105,7 @@ export const Box = styled('section', {
   width: '32%',
 
   position: 'relative',
-
+  cursor: 'pointer',
   '& + &': {
     marginTop: '$3',
   },
