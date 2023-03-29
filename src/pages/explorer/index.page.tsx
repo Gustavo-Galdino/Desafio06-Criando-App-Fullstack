@@ -1,5 +1,3 @@
-import { useApi } from '@/context/apiContext'
-import { api } from '@/lib/api'
 import Image from 'next/image'
 import * as Dialog from '@radix-ui/react-dialog'
 
@@ -21,6 +19,9 @@ import {
 import { BookDetails } from '@/components/bookDetails'
 import { Nav } from '@/components/nav'
 import { Container } from '../home/styles'
+import axios from 'axios'
+import { api } from '@/lib/api'
+import { GetServerSideProps } from 'next'
 
 interface CategoriesOnBooks {
   book_id: string
@@ -30,6 +31,12 @@ interface CategoriesOnBooks {
 interface Rating {
   id: string
   rate: number
+}
+
+interface Category {
+  id: string
+  name: string
+  books: CategoriesOnBooks[]
 }
 
 interface Books {
@@ -43,8 +50,12 @@ interface Books {
   categories?: CategoriesOnBooks[]
 }
 
-export default function Explorer() {
-  const { books, categories } = useApi()
+interface ExplorerProps {
+  books: Books[]
+  categories: Category[]
+}
+
+export default function Explorer({ books, categories }: ExplorerProps) {
   const [selectedCategory, setSelectedCategory] = useState<Books[]>(books)
   const { register, watch } = useForm()
 
@@ -174,4 +185,18 @@ export default function Explorer() {
       </Main>
     </Container>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const booksResponse = await axios.get('http://localhost:3000/api/books')
+  const categoriesResponse = await axios.get(
+    'http://localhost:3000/api/category',
+  )
+
+  return {
+    props: {
+      books: booksResponse.data,
+      categories: categoriesResponse.data,
+    },
+  }
 }

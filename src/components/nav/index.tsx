@@ -2,9 +2,11 @@ import Image from 'next/image'
 import { ChartLineUp, Binoculars, SignIn, SignOut, User } from 'phosphor-react'
 import { Button, LinkContainer, NavContainer, NavLink } from './styles'
 import logo from '@/assets/Logo.svg'
-import { signIn, signOut, useSession } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { Avatar } from '@/components/avatar'
 import { useRouter } from 'next/router'
+import { LoginBox } from '../loginBox'
+import * as Dialog from '@radix-ui/react-dialog'
 
 export function Nav() {
   const session = useSession()
@@ -51,10 +53,14 @@ export function Nav() {
           <SignOut size={20} color="#F75A68" />
         </Button>
       ) : (
-        <Button onClick={() => signIn('google')}>
-          Fazer Login
-          <SignIn size={20} />
-        </Button>
+        <Dialog.Root>
+          <Dialog.Trigger asChild>
+            <Button>
+              Fazer Login <SignIn size={20} color="red" />
+            </Button>
+          </Dialog.Trigger>
+          {!isSignedIn && <LoginBox />}
+        </Dialog.Root>
       )}
     </NavContainer>
   )

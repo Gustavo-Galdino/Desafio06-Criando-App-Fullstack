@@ -6,7 +6,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { pt } from 'date-fns/locale'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
-import { Star } from 'phosphor-react'
+import { BookmarkSimple, BookOpen, Books, Star, UserList } from 'phosphor-react'
 import { Container, Main } from '../home/styles'
 import {
   CardContainer,
@@ -14,6 +14,9 @@ import {
   Author,
   Descriptions,
   AvatarContainer,
+  UserContainer,
+  Infos,
+  InfosContent,
 } from './styles'
 
 export default function Profile() {
@@ -24,6 +27,41 @@ export default function Profile() {
   const userRatings = ratings.filter(
     (rating) => rating.user_id === session.data?.user.id,
   )
+
+  const readBooks = userRatings.map((rating) => {
+    const book = books.find((book) => book.id === rating.book_id)
+
+    return {
+      id: book?.id,
+      author: book?.author,
+      pages: book?.total_pages,
+      category: book?.categories,
+    }
+  })
+
+  const totalPagesRead = readBooks.reduce((acc, page) => acc + page.pages!, 0)
+  const uniqueAuthors = readBooks
+    .map((book) => book.author)
+    .filter((author, index, array) => array.indexOf(author) === index)
+
+  // const categoryIds = readBooks
+  //   .map((book) => book.category?.map((category) => category.categoryId))
+  //   .flat()
+
+  // const category = categoryIds.map((categoryId) =>
+  //   categories.find((category) => category.id === categoryId),
+  // )
+
+  // const categoryName = category.map((name) => name?.name)
+
+  // const categoryCount = categoryName.reduce((count, name) => {
+  //   if (name) {
+  //     return { ...count, [name]: (count[name] || 0) + 1 }
+  //   }
+  //   return count
+  // }, {})
+
+  // console.log(categoryCount)
 
   return (
     <Container>
@@ -81,29 +119,43 @@ export default function Profile() {
         </CardContainer>
 
         <AvatarContainer>
-          <div>
+          <UserContainer>
             <Avatar image={session.data?.user.image!} />
             <p>{session.data?.user.name}</p>
-          </div>
+          </UserContainer>
 
-          <div>
+          <span></span>
+
+          <Infos>
             <div>
-              <p>3853</p>
-              <p>Paginas lidas</p>
+              <BookOpen size={32} />
+              <InfosContent>
+                <span>{totalPagesRead}</span>
+                <p>Paginas lidas</p>
+              </InfosContent>
             </div>
             <div>
-              <p>10</p>
-              <p>Livros avaliados</p>
+              <Books size={32} />
+              <InfosContent>
+                <span>{userRatings.length}</span>
+                <p>Livros avaliados</p>
+              </InfosContent>
             </div>
             <div>
-              <p>8</p>
-              <p>Autores lidos</p>
+              <UserList size={32} />
+              <InfosContent>
+                <span>{uniqueAuthors.length}</span>
+                <p>Autores lidos</p>
+              </InfosContent>
             </div>
             <div>
-              <p>Computação</p>
-              <p>Categoria mais lida</p>
+              <BookmarkSimple size={32} />
+              <InfosContent>
+                <span>Computação</span>
+                <p>Categoria mais lida</p>
+              </InfosContent>
             </div>
-          </div>
+          </Infos>
         </AvatarContainer>
       </Main>
     </Container>

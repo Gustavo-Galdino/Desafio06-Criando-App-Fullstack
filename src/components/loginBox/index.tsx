@@ -24,7 +24,7 @@ export function LoginBox() {
             <Image src={googleLogo} width={32} height={32} alt="Google Logo" />
             Entrar com Google
           </Button>
-          <Button type="button">
+          <Button type="button" onClick={() => signIn('github')}>
             <Image src={githubLogo} width={32} height={32} alt="GitHub Logo" />
             Entrar com GitHub
           </Button>

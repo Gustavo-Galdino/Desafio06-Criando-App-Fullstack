@@ -8,7 +8,8 @@ export const AvatarContainer = styled(Avatar.Root, {
   height: '40px',
   overflow: 'hidden',
 
-  border: '2px solid #7FD1CC',
+  border: '2px solid transparent',
+  background: 'linear-gradient(45deg, #7FD1CC 0%, #9694F5 100%)',
 })
 
 export const AvatarImage = styled(Avatar.Image, {
