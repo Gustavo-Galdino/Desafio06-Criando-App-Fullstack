@@ -1,7 +1,8 @@
 import { api } from '@/lib/api'
 import { useSession } from 'next-auth/react'
+
 import { Check, Star, X } from 'phosphor-react'
-import { useState } from 'react'
+import { SetStateAction, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Avatar } from '../avatar'
 import { Box, Header } from '../cards/styles'
@@ -9,15 +10,16 @@ import { StarContainer, TextArea, TextAreaContainer } from './styles'
 
 interface RateCommentProps {
   bookId: string
+  onButtonReview: (value: SetStateAction<boolean>) => void
 }
 
-export function RateComment({ bookId }: RateCommentProps) {
+export function RateComment({ bookId, onButtonReview }: RateCommentProps) {
   const [stars, setStars] = useState(Array(5).fill(false))
-  const { register, watch } = useForm()
+  const { register, watch, reset } = useForm()
 
   const session = useSession()
 
-  const rate = 4
+  const rate = stars.filter((star) => star === true).length
   const description = watch('description')
 
   function handleStarClick(index: number) {
@@ -36,6 +38,9 @@ export function RateComment({ bookId }: RateCommentProps) {
         description,
         bookId,
       })
+
+      reset()
+      onButtonReview(false)
     } catch (error) {
       console.error(error)
     }
@@ -70,7 +75,11 @@ export function RateComment({ bookId }: RateCommentProps) {
 
         <div>
           <button type="submit">
-            <X size={24} color="#8381D9" />
+            <X
+              size={24}
+              color="#8381D9"
+              onClick={() => onButtonReview(false)}
+            />
           </button>
           <button
             type="submit"

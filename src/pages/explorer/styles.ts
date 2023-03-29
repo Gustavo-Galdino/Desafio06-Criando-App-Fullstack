@@ -1,15 +1,21 @@
-import { styled } from '../../../../../stitches.config'
+import { styled } from '../../../stitches.config'
 
-export const Container = styled('div', {
+export const Main = styled('main', {
   display: 'flex',
   flexDirection: 'column',
-  gap: '$10',
+  gap: '4rem',
+
+  marginTop: '4.5rem',
 })
 
 export const Header = styled('header', {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
+
+  h1: {
+    fontSize: '$2xl',
+  },
 
   '> div': {
     display: 'flex',

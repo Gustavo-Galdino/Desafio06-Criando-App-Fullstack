@@ -12,6 +12,7 @@ interface Rating {
   rate: number
   book_id: string
   description: string
+  created_at: string
 }
 
 interface CategoriesOnBooks {
@@ -44,11 +45,21 @@ interface User {
   book: Books[]
 }
 
+interface Rate {
+  id: string
+  rate: number
+  book_id: string
+  user_id: string
+  description: string
+  created_at: string
+}
+
 interface ApiContextType {
   books: Books[]
   popularBooks: Books[]
   users: User[]
   categories: Category[]
+  ratings: Rate[]
 }
 
 const ApiContext = createContext({} as ApiContextType)
@@ -72,6 +83,7 @@ export function getMostPopularBooks(books: Books[]) {
 export function ApiProvider({ children }: ApiProviderProps) {
   const [books, setBooks] = useState<Books[]>([])
   const [users, setUsers] = useState<User[]>([])
+  const [ratings, setRatings] = useState<Rate[]>([])
   const [popularBooks, setPopularBooks] = useState<Books[]>([])
   const [categories, setCategories] = useState<Category[]>([])
 
@@ -96,6 +108,16 @@ export function ApiProvider({ children }: ApiProviderProps) {
   }, [])
 
   useEffect(() => {
+    async function getUsers() {
+      const res = await api.get('ratings')
+
+      setRatings(res.data)
+    }
+
+    getUsers()
+  }, [])
+
+  useEffect(() => {
     async function getCategory() {
       const res = await api.get('/category')
 
@@ -110,7 +132,9 @@ export function ApiProvider({ children }: ApiProviderProps) {
   }, [books])
 
   return (
-    <ApiContext.Provider value={{ books, users, popularBooks, categories }}>
+    <ApiContext.Provider
+      value={{ books, users, popularBooks, categories, ratings }}
+    >
       {children}
     </ApiContext.Provider>
   )

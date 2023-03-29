@@ -1,5 +1,5 @@
 import { Cards } from '@/components/cards'
-import Link from 'next/link'
+
 import { CaretRight } from 'phosphor-react'
 import { Header, PopularContainer } from './styles'
 
@@ -8,9 +8,9 @@ export function Popular() {
     <PopularContainer>
       <Header>
         <h4>Livros populares</h4>
-        <Link href={'#'}>
+        <button>
           Ver todos <CaretRight size={16} />
-        </Link>
+        </button>
       </Header>
 
       <Cards short={false} popularView={true} />

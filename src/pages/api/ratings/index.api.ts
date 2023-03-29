@@ -10,7 +10,11 @@ export default async function handler(
   }
 
   try {
-    const users = await prisma.rating.findMany()
+    const users = await prisma.rating.findMany({
+      orderBy: {
+        created_at: 'desc',
+      },
+    })
 
     return res.status(200).json(users)
   } catch (error) {

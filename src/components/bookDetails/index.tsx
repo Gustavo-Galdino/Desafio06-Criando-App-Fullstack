@@ -1,9 +1,11 @@
 import { useApi } from '@/context/apiContext'
-
+import { formatDistanceToNow } from 'date-fns'
+import { pt } from 'date-fns/locale'
 import * as Dialog from '@radix-ui/react-dialog'
+import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { BookmarkSimple, BookOpen, Star, X } from 'phosphor-react'
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import { Avatar } from '../avatar'
 import { Descriptions, Header } from '../cards/styles'
 import { LoginBox } from '../loginBox'
@@ -42,7 +44,19 @@ export function BookDetails({
   rate,
   bookId,
 }: BookDetailsProps) {
-  const { users } = useApi()
+  const { users, ratings } = useApi()
+  const [handleButtonReview, sethandleButtonReview] = useState(false)
+
+  const session = useSession()
+
+  const isSignedIn = session.status === 'authenticated'
+
+  const rateCount = users.reduce((acc, user) => {
+    const bookRatings = user.ratings.filter(
+      (rating) => rating.book_id === bookId,
+    )
+    return acc + bookRatings.length
+  }, 0)
 
   return (
     <Dialog.Portal>
@@ -64,7 +78,11 @@ export function BookDetails({
 
               <StarContainer>
                 <div>{rate}</div>
-                <span>3 avaliações</span>
+                <span>
+                  {rateCount > 1
+                    ? `${rateCount} avaliações`
+                    : `${rateCount} avaliação`}
+                </span>
               </StarContainer>
             </ContentBook>
           </BookContainer>
@@ -92,41 +110,60 @@ export function BookDetails({
             <h5>Avaliações</h5>
             <Dialog.Root>
               <Dialog.Trigger asChild>
-                <button>Avaliar</button>
+                <button
+                  onClick={() => {
+                    isSignedIn
+                      ? sethandleButtonReview(true)
+                      : sethandleButtonReview(false)
+                  }}
+                >
+                  Avaliar
+                </button>
               </Dialog.Trigger>
-              <LoginBox />
+              {!isSignedIn && <LoginBox />}
             </Dialog.Root>
           </RatingTile>
 
-          <RateComment bookId={bookId} />
-
-          {users.map((user) =>
-            user.ratings.map((rating) => {
-              const book = rating.book_id === bookId
-
-              if (!book) return null
-              return (
-                <Box key={rating.id}>
-                  <Header>
-                    <div>
-                      <Avatar image={user.image} />
-                      <div>
-                        {user.name}
-                        <span>Hoje</span>
-                      </div>
-                    </div>
-                    <StarContainer>
-                      {[...Array(rating.rate)].map((_, index) => (
-                        <Star weight="fill" key={index} />
-                      ))}
-                      {rating.rate < 5 && <Star />}
-                    </StarContainer>
-                  </Header>
-                  <Descriptions>{rating.description}</Descriptions>
-                </Box>
-              )
-            }),
+          {handleButtonReview && (
+            <RateComment
+              bookId={bookId}
+              onButtonReview={sethandleButtonReview}
+            />
           )}
+
+          {ratings.map((rating) => {
+            const book = rating.book_id === bookId
+            const user = users.find((user) => user.id === rating.user_id)
+
+            if (!book || !user) return null
+            return (
+              <Box key={rating.id}>
+                <Header>
+                  <div>
+                    <Avatar image={user.image} />
+                    <div>
+                      {user.name}
+                      <span>
+                        {formatDistanceToNow(new Date(rating.created_at), {
+                          addSuffix: true,
+                          locale: pt,
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                  <StarContainer>
+                    {[...Array(5)].map((_, index) => (
+                      <Star
+                        weight={index < rating.rate ? 'fill' : undefined}
+                        key={index}
+                      />
+                    ))}
+                  </StarContainer>
+                </Header>
+                <Descriptions>{rating.description}</Descriptions>
+              </Box>
+            )
+          })}
         </CommentsContent>
       </Content>
     </Dialog.Portal>

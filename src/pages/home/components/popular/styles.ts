@@ -17,8 +17,15 @@ export const Header = styled('header', {
     lineHeight: '$base',
   },
 
-  a: {
-    textDecoration: 'none',
+  button: {
+    all: 'unset',
+    cursor: 'pointer',
+
+    display: 'flex',
+    alignItems: 'center',
+    gap: '$2',
     color: '$purple100',
+    fontWeight: '$bold',
+    fontSize: '$sm',
   },
 })
